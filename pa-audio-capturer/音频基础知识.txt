@@ -1,0 +1,60 @@
+0 样本大小（Sample Size）
+Sample Size (Bytes)= Bits per Sample / 8
+
+其中：
+Bits per Sample 是每个样本的位数（例如，16位、24位、32位等）。
+示例
+1. 16位样本
+对于16位音频：
+Sample Size = 16 / 8 = 2字节
+
+1 帧大小 (Frame Size)
+Frame Size (Bytes)=Channels×Bits per Sample/8
+
+其中：
+Channels 是声道数（例如，单声道为1，立体声为2）。
+Bits per Sample 是每个样本的位数（例如，16位、24位、32位等）。
+
+示例：
+对于16位深度的立体声音频： 
+Frame Size=2×16/8=4字节
+
+2 采样率
+指的是每秒采样samples的数据，
+	对于单声道，采样一次sample就是一帧。
+	对于双声道，采样两次sample才是一帧。
+
+3 空洞数据（或者静音数据）：
+无符号，有符号，压缩的音频数据的空洞数据的值是不同的：
+示例：
+static uint8_t silence_byte(pa_sample_format_t format) {
+    switch (format) {
+        case PA_SAMPLE_U8:
+            return 0x80;
+        case PA_SAMPLE_S16LE:
+        case PA_SAMPLE_S16BE:
+        case PA_SAMPLE_S32LE:
+        case PA_SAMPLE_S32BE:
+        case PA_SAMPLE_FLOAT32LE:
+        case PA_SAMPLE_FLOAT32BE:
+        case PA_SAMPLE_S24LE:
+        case PA_SAMPLE_S24BE:
+        case PA_SAMPLE_S24_32LE:
+        case PA_SAMPLE_S24_32BE:
+            return 0;
+        case PA_SAMPLE_ALAW:
+            return 0xd5;
+        case PA_SAMPLE_ULAW:
+            return 0xff;
+        default:
+            pa_assert_not_reached();
+    }
+}
+
+4 音频缓冲区延迟计算：
+    播放一秒音频的字节数 
+        BytesPerSecond = samplerate * sampleSize * channel
+    以时间为单位：
+        BufferTime(ms) = ((BufferSize / sampleSize * channel) * 1000) / samplerate
+    以字节为单位：
+        BufferSize = ((BufferTime(ms) * samplerate) /1000) * sampleSize * channel
