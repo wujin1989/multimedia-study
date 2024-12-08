@@ -135,7 +135,7 @@ fail:
 	return;
 }
 
-pa_audio_capturer_t* pa_audio_capturer_create(pa_audio_capturer_config_t* config){
+extreme_audio_capturer_t* pulseaudio_capturer_create(extreme_audio_capturer_config_t* config) {
 	/*char monitor[128] = { 0 };
 	get_monitor_device(monitor);*/
 	int ret;
@@ -201,12 +201,12 @@ pa_audio_capturer_t* pa_audio_capturer_create(pa_audio_capturer_config_t* config
 	pa_stream_set_write_callback(stream, stream_request_cb, mainloop);
 	pa_stream_set_latency_update_callback(stream, stream_latency_update_cb, mainloop);
 
-	ret = pa_stream_connect_record(stream, 
-									PA_DEFAULT_MONITOR_NAME, 
-									&attr,
-									PA_STREAM_INTERPOLATE_TIMING
-									| PA_STREAM_ADJUST_LATENCY
-									| PA_STREAM_AUTO_TIMING_UPDATE);
+	ret = pa_stream_connect_record(stream,
+		PA_DEFAULT_MONITOR_NAME,
+		&attr,
+		PA_STREAM_INTERPOLATE_TIMING
+		| PA_STREAM_ADJUST_LATENCY
+		| PA_STREAM_AUTO_TIMING_UPDATE);
 	if (ret < 0) {
 		pa_threaded_mainloop_unlock(mainloop);
 		goto fail;
@@ -294,7 +294,8 @@ int pa_audio_capturer_capture(pa_audio_capturer_t* capturer, pa_audio_capturer_d
 				if (pa_stream_get_latency(capturer->stm, &latency, &negative) >= 0) {
 					if (negative) {
 						dts += latency;
-					} else {
+					}
+					else {
 						dts -= latency;
 					}
 				}
