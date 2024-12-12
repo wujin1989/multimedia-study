@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(extreme-remotedisplay LANGUAGES C)
+project(extreme LANGUAGES C)
 
 if (CMAKE_SIZEOF_VOID_P LESS 8)
 	message(FATAL_ERROR "only 64bit supported")
@@ -17,11 +17,6 @@ if(WIN32)
 	endif()
 endif()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG bin/Debug)
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE bin/Release)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG lib/Debug)
-set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE lib/Release)
-
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64" OR CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
 		set(CDK_LIB_DIR "third-party/cdk/lib/linux/amd64")
@@ -29,12 +24,21 @@ if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 endif()
 
 include_directories(include)
+include_directories(src)
 include_directories(third-party/cdk/include)
 link_directories(${CDK_LIB_DIR})
-link_directories(${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG})
-link_directories(${CMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE})
 
-add_executable(extreme-remotedisplay "src/extreme-remotedisplay.c")
-target_link_libraries(extreme-remotedisplay PUBLIC m cdk pa-audio-capturer)
+set(SRCS
+	src/av-capturer/extreme-av-capturer.c
+)
 
-add_subdirectory(src/extreme-audio-capturer)
+if (CMAKE_SYSTEM_NAME MATCHES "Linux")
+	list(APPEND SRCS 
+		src/platform/linux/platform-av-capturer.c
+		src/platform/linux/pulseaudio-capturer.c
+	)
+	add_library(extreme STATIC ${SRCS})
+	target_link_libraries(extreme PUBLIC m cdk pulse)
+endif()
+
+add_subdirectory(examples)
