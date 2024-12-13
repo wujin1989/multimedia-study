@@ -4,6 +4,8 @@
 FILE* pcm;
 void data_cb(extreme_av_buffer_t* data) {
 	fwrite(data->data, data->size, 1, pcm);
+	free(data);
+	data = NULL;
 }
 
 int main(void) {
