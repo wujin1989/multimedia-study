@@ -20,25 +20,31 @@ endif()
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64" OR CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
 		set(CDK_LIB_DIR "third-party/cdk/lib/linux/amd64")
+		set(OPUS_LIB_DIR "third-party/opus/lib/linux/amd64")
 	endif()
 endif()
 
 include_directories(include)
 include_directories(src)
 include_directories(third-party/cdk/include)
+include_directories(third-party/opus/include)
 link_directories(${CDK_LIB_DIR})
+link_directories(${OPUS_LIB_DIR})
 
 set(SRCS
 	src/av-capturer/extreme-av-capturer.c
+	src/av-encoder/extreme-av-encoder.c
+	src/av-encoder/opus-encoder.c
 )
 
 if (CMAKE_SYSTEM_NAME MATCHES "Linux")
 	list(APPEND SRCS 
 		src/platform/linux/platform-av-capturer.c
 		src/platform/linux/pulseaudio-capturer.c
+		src/platform/linux/alsa-capturer.c
 	)
 	add_library(extreme STATIC ${SRCS})
-	target_link_libraries(extreme PUBLIC m cdk pulse)
+	target_link_libraries(extreme PUBLIC m cdk pulse opus)
 endif()
 
 add_subdirectory(examples)

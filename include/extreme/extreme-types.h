@@ -15,8 +15,10 @@ typedef struct extreme_video_capturer_config_s        extreme_video_capturer_con
 typedef struct extreme_av_capturer_s                  extreme_av_capturer_t;
 typedef struct extreme_av_buffer_s                    extreme_av_buffer_t;
 typedef struct extreme_av_capturer_config_s           extreme_av_capturer_config_t;
-
 typedef void (*extreme_av_capturer_data_cb)(extreme_av_buffer_t* data);
+
+typedef struct extreme_av_encoder_s                   extreme_av_encoder_t;
+typedef struct extreme_av_encoder_config_s            extreme_av_encoder_config_t;
 
 enum extreme_audio_format_e {
 	EXTREME_AUDIO_FORMAT_NONE,
